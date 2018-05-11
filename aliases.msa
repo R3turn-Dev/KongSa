@@ -1,0 +1,29 @@
+# 로깅 시작
+/enablelogging = >>>
+	store_value(GLOBAL.DEBUGGING, 1)
+<<<
+
+
+# 로깅 중단
+/disablelogging = >>>
+	clear_value(GLOBAL.DEBUGGING)
+<<<
+
+
+# Back 명령어는 기본적으로 제한하나, OP에 한해서 정상작동하게 한다.
+*:/back = >>>
+	if(pisop(player())) {
+		runas(player(), '/back')
+	} else {
+		msg('사용할 수 없는 명령어입니다.')
+	}
+<<<
+
+# home 명령어는 기본적으로 제한하나, OP에 한해서 정상작동하게 한다.
+*:/home [$=''] = >>>
+	if(pisop(player())) {
+		runas(player(), '/home '.$)
+	} else {
+		msg('사용할 수 없는 명령어입니다.')
+	}
+<<<
