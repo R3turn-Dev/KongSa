@@ -19,11 +19,92 @@
 	}
 <<<
 
-# home 명령어는 기본적으로 제한하나, OP에 한해서 정상작동하게 한다.
-*:/home [$=''] = >>>
-	if(pisop(player())) {
-		runas(player(), '/home '.$)
+
+/* *:/rmute [$p=''] [$t=''] [$=''] = >>>
+	@pl = player()
+	@p = to_lower($p)
+	
+	if(pisop(@pl)) {
+		if(@p && $t) {
+			store_value(@p.mute, 1)
+			store_value(@p.mute.duration, $t)
+			store_value(@p.mute.time, nano_time())
+			store_value(@p.mute.operator, @pl)
+			store_value(@p.mute.reason, $)
+			
+			msg(colorize('&b[ MUTE ] &aSuccessfully &fmuted player.'))
+			if(ponline(@p)) {
+				msg(colorize('  - Player: &c'.@p.' &a(Online)'))
+			} else {
+				msg(colorize('  - Player: &c'.@p.' &c(Offline)'))
+			}
+			msg(colorize('  - Time: &a'.$t))
+			msg(colorize('  - Reason: &f'.$))
+			
+			broadcast(colorize('   [ &c신의 지팡이&f ] &c'.@p.'&f 님께서 &c뮤트&f처리되었습니다. (&a'.$t.'초&f)'))
+		} else {
+			msg(colorize('Usage: /rmute <playername> <time> [reason(optional)]'))
+		}
 	} else {
-		msg('사용할 수 없는 명령어입니다.')
+		msg(colorize('&c[ CAUTION ] &f 사용할 수 없는 명령어입니다.'))
 	}
+<<< */
+
+/commandfeedback_init = >>>
+	store_value("commandfeedback.list", json_encode(array()))
+<<<
+
+
+/commandfeedback = >>>
+	@players = json_decode(get_value("commandfeedback.list"))
+
+	if(array_contains(@players, player())) {
+		array_remove_values(@players, player())
+		msg("Disabled")
+	} else {
+		array_push(@players, player())
+		msg("Enabled")
+	}
+	store_value("commandfeedback.list", json_encode(@players))
+<<<
+
+
+*:/호출 [$=''] = >>>
+	if(!$)	{
+		msg(colorize("\n  &e[ AdminCalling ]&f &c사유&f를 입력해주세요. (/호출 <사유>)\n"))
+		msg("")
+	} else {
+		@person = player()
+		@reason = $
+
+        if (!has_value(@person.AdminCalling)) {
+            store_value(@person.AdminCalling, null)
+        }
+
+        @interval = 30
+		@now = time()
+		@last = get_value(@person.AdminCalling)
+		@passed = (@now - @last) / 1000
+
+        if (@passed >= @interval) {
+        	@players = all_players()
+			store_value(@person.AdminCalling, @now)
+
+			@count = 0
+			foreach(@player in @players) {
+        		if(pisop(@player)) {
+        			play_sound(ploc(@player), array(sound:"WITHER_DEATH", volume:100, pitch:1), @player)
+        			tmsg(@player, colorize("     &b Calling from &f".@person))
+        			tmsg(@player, colorize("   Reason: ".@reason))
+					tmsg(@player, "")
+					@count = @count + 1
+				}
+			}
+			msg(colorize("\n  &e[ AdminCalling ]&f &c".@count."&f명의 어드민을 호출했습니다.\n"))
+			msg("")
+        } else {
+			msg(colorize("\n  &e[ AdminCalling ]&f &c".(@interval - @passed)."&f초 뒤에 다시 사용하실 수 있습니다.\n"))
+			msg("")
+        }
+    }
 <<<
