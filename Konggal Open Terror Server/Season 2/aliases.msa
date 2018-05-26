@@ -1,0 +1,92 @@
+# 로깅 시작
+/enablelogging = >>>
+	store_value(GLOBAL.DEBUGGING, 1)
+<<<
+
+
+# 로깅 중단
+/disablelogging = >>>
+	clear_value(GLOBAL.DEBUGGING)
+<<<
+
+/rand = >>>
+    msg(round(rand()*1000000) % 3000)
+<<<
+
+*:/rtp = >>>
+    @x = round(rand()*1000000) % 3000
+    @z = round(rand()*1000000) % 3000
+
+    set_ploc(
+    @x, get_highest_block_at(@x, @z, ploc()['world'])['y'], @z
+    )
+<<<
+
+*:/spawn = >>>
+	if(pisop(player())) {
+		runas(player(), '/back')
+	} else {
+		msg('사용할 수 없는 명령어입니다.')
+	}
+<<<
+*:/back = >>>
+	if(pisop(player())) {
+		runas(player(), '/back')
+	} else {
+		msg('사용할 수 없는 명령어입니다.')
+	}
+<<<
+
+
+/commandfeedback = >>>
+	@players = json_decode(get_value("commandfeedback.list"))
+
+	if(array_contains(@players, player())) {
+		array_remove_values(@players, player())
+		msg(colorize(' &e[ CommandFeedback ] &f커맨드 피드백이 &c비활성화&f되었습니다.'))
+	} else {
+		array_push(@players, player())
+		msg(colorize(' &e[ CommandFeedback ] &f커맨드 피드백이 &b활성화&f되었습니다.'))
+	}
+	store_value("commandfeedback.list", json_encode(@players))
+<<<
+        
+*:/호출 [$=''] = >>>
+	if(!$)	{
+		msg(colorize("\n  &e[ AdminCalling ]&f &c사유&f를 입력해주세요. (/호출 <사유>)\n"))
+		msg("")
+	} else {
+		@person = player()
+		@reason = $
+
+        if (!has_value(sprintf('%s.AdminCalling', @person))) {
+            store_value(sprintf('%s.AdminCalling', @person), 0)
+        }
+
+        @interval = 30
+		@now = time()
+		@last = get_value(sprintf('%s.AdminCalling', @person))
+		@passed = (@now - @last) / 1000
+
+        if (@passed >= @interval) {
+        	@players = all_players()
+			store_value(sprintf('%s.AdminCalling', @person), @now)
+
+			@count = 0
+			foreach(@player in @players) {
+        		if(pisop(@player)) {
+        			play_sound(ploc(@player), array(sound:"WITHER_DEATH", volume:100, pitch:1), @player)
+        			tmsg(@player, colorize("     &b Calling from &f".@person))
+        			tmsg(@player, colorize("   Reason: ".@reason))
+					tmsg(@player, "")
+					@count = @count + 1
+				}
+			}
+			msg(colorize("\n  &e[ AdminCalling ]&f &c".@count."&f명의 어드민을 호출했습니다.\n"))
+			msg("")
+        } else {
+			msg(colorize("\n  &e[ AdminCalling ]&f &c".(@interval - @passed)."&f초 뒤에 다시 사용하실 수 있습니다.\n"))
+			msg("")
+        }
+    }
+<<<
