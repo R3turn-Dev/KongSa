@@ -132,11 +132,11 @@
             if(has_value("broadcast")) {
                 @msg = json_decode(get_value("broadcast"))
 
-                runas(~console, '/title @a times 10 50 10')
+                runas(~console, '/title @a times 10 200 10')
                 if(@msg['title']) {
-                    runas(~console, '/title @a title '.@msg['title'])
+                    runas(~console, '/title @a title {"text":"'.@msg['title'].'"}')
                     if(@msg['subtitle']) {
-                        runas(~console, '/title @a subtitle '.@msg['subtitle'])
+                        runas(~console, '/title @a subtitle {"text":"'.@msg['subtitle'].'"}')
                     }
                 }
             } else {

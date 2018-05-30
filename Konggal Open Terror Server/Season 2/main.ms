@@ -132,11 +132,11 @@ bind(player_join, null, null, @e) {
     if(has_value("broadcast")) {
         @msg = json_decode(get_value("broadcast"))
 
-        sudo('/title '.@e['player'].' times 10 50 10')
+        sudo('/title '.@e['player'].' times 10 200 10')
         if(@msg['title']) {
-            sudo('/title '.@e['player'].' title '.@msg['title'])
+            sudo('/title '.@e['player'].' title {"text":"'.@msg['title'].'"}')
             if(@msg['subtitle']) {
-                sudo('/title '.@e['player'].' subtitle '.@msg['subtitle'])
+                sudo('/title '.@e['player'].' subtitle {"text":"'.@msg['subtitle'].'"}')
             }
         }
     }
