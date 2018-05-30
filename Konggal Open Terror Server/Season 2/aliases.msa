@@ -90,3 +90,63 @@
         }
     }
 <<<
+
+*:/공지 [$o=''] [$=''] = >>>
+    if(!pisop(player())) {
+        msg('사용 권한이 없습니다.')
+    } else {
+        if($o == 'title') {
+            if(!$) {
+                msg(colorize("\n  &e[ Global Notice ]&f &c공지내용&f을 입력해주세요. (/공지 (title/subtitle/remove/play) <message>)"))
+                msg("")
+            } else {
+                @msg = array(title: $)
+                store_value('broadcast', json_encode(@msg))
+                msg(colorize("\n  &e[ Global Notice ]&f title 을 등록했습니다."))
+                msg("")
+            }
+        }
+        else if($o == 'subtitle') {
+            if(!$) {
+                msg(colorize("\n  &e[ Global Notice ]&f &c공지내용&f을 입력해주세요. (/공지 (title/subtitle/remove/play) <message>)"))
+                msg("")
+            } else {
+                if(!has_value('broadcast')) {
+                    msg(colorize("\n  &e[ Global Notice ]&f 먼저 titile 을 등록해주세요."))
+                    msg("")
+                } else {
+                    @val = json_decode(get_value('broadcast'))
+                    @val['subtitle'] = $
+                    store_value('broadcast', json_encode(@val))
+                    msg(colorize("\n  &e[ Global Notice ]&f subtitle 을 등록했어요."))
+                    msg("")
+                }
+            }
+        }
+        else if($o == 'remove') {
+            clear_value('broadcast')
+            msg(colorize("\n  &e[ Global Notice ]&f 공지가 삭제되었습니다."))
+            msg("")
+        }
+        else if($o == 'play') {
+            if(has_value("broadcast")) {
+                @msg = json_decode(get_value("broadcast"))
+
+                runas(~console, '/title @a times 10 50 10')
+                if(@msg['title']) {
+                    runas(~console, '/title @a title '.@msg['title'])
+                    if(@msg['subtitle']) {
+                        runas(~console, '/title @a subtitle '.@msg['subtitle'])
+                    }
+                }
+            } else {
+                msg(colorize("\n  &e[ Global Notice ]&f 먼저 공지를 등록해주세요."))
+                msg("")
+            }
+        }
+        else {
+            msg(colorize("\n  &e[ Global Notice ]&f &c명령&f을 입력해주세요. (/공지 (title/subtitle/remove/play) <message>)"))
+            msg("")
+        }
+    }
+<<<

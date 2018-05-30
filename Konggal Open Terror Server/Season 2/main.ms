@@ -74,7 +74,7 @@ bind(player_command, null, null, @e) { if(@e['prefix'] == '/tpa' || @e['prefix']
 ######################
 
 bind(player_death, null, null, @e) {
-	sudo('/title '.@e['player'].' time 10 40 10')
+	sudo('/title '.@e['player'].' times 10 40 10')
 	sudo('/title '.@e['player'].' title {"text":"","extra":[{"text":"죽다니 "},{"text":"한심","color":"red","bold":"true"},{"text":"하군요. :D"}]}')
 }
 
@@ -121,3 +121,23 @@ bind(creature_spawn, array(priority: HIGHEST), null, @event,
 		}
 	}
 )
+
+
+
+####################
+# Entrance Message #
+####################
+
+bind(player_join, null, null, @e) {
+    if(has_value("broadcast")) {
+        @msg = json_decode(get_value("broadcast"))
+
+        sudo('/title '.@e['player'].' times 10 50 10')
+        if(@msg['title']) {
+            sudo('/title '.@e['player'].' title '.@msg['title'])
+            if(@msg['subtitle']) {
+                sudo('/title '.@e['player'].' subtitle '.@msg['subtitle'])
+            }
+        }
+    }
+}
