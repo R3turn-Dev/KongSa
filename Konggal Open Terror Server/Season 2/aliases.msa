@@ -14,21 +14,19 @@
 <<<
 
 *:/rtp = >>>
-    @x = round(rand()*1000000) % 3000
-    @z = round(rand()*1000000) % 3000
-
-    set_ploc(
-    @x, get_highest_block_at(@x, @z, ploc()['world'])['y'], @z
-    )
+    if(pisop(player())) {
+        _random_teleport(player(), true)
+    }
 <<<
 
 *:/spawn = >>>
 	if(pisop(player())) {
-		runas(player(), '/back')
+		runas(player(), '/spawn')
 	} else {
 		msg('사용할 수 없는 명령어입니다.')
 	}
 <<<
+
 *:/back = >>>
 	if(pisop(player())) {
 		runas(player(), '/back')
@@ -50,7 +48,7 @@
 	}
 	store_value("commandfeedback.list", json_encode(@players))
 <<<
-        
+
 *:/호출 [$=''] = >>>
 	if(!$)	{
 		msg(colorize("\n  &e[ AdminCalling ]&f &c사유&f를 입력해주세요. (/호출 <사유>)\n"))

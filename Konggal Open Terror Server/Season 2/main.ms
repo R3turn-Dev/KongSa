@@ -80,6 +80,25 @@ bind(player_death, null, null, @e) {
 
 
 ####################
+#   Random Spawn   #
+####################
+
+bind(player_death, null, null, @e) {
+    set_spawn(_random_teleport(@e['player'], false))
+}
+
+bind(player_join, null, null, @e){
+    if(@e['first_login']) {
+        broadcast('first join of '.@e['player'])
+        bind(player_move, null, array(player: @e['player']), @ev) {
+            _random_teleport(@ev['player'], true)
+
+            unbind()
+        }
+    }
+}
+
+####################
 #  Anti Explosion  #
 ####################
 
